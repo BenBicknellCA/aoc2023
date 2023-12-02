@@ -1,15 +1,13 @@
 use std::fs;
 
-fn main() {
-    part_2().unwrap();
-}
+fn main() {}
 
 fn read_input() -> String {
     fs::read_to_string("input").unwrap()
 }
 
-fn part_1() {
-    let mut answer_sum: usize = 0;
+fn part_1() -> usize {
+    let mut total: usize = 0;
     let input = read_input();
     for i in input.lines() {
         let nums: Vec<u32> = i
@@ -19,12 +17,12 @@ fn part_1() {
         let first = nums.first().unwrap().to_string();
         let last = nums.last().unwrap().to_string();
         let final_answer = first + &last;
-        answer_sum += final_answer.parse::<usize>().unwrap();
+        total += final_answer.parse::<usize>().unwrap();
     }
-    println!("{answer_sum}");
+    total
 }
 
-fn part_2() -> Result<usize, ()> {
+fn part_2() -> usize {
     use aho_corasick::AhoCorasick;
 
     let input = read_input();
@@ -38,7 +36,6 @@ fn part_2() -> Result<usize, ()> {
         let mut number = String::new();
         for mat in ac.find_overlapping_iter(i) {
             let get_match = match mat.pattern().as_usize() {
-                0 => None,
                 1..=9 => Some(mat.pattern().as_usize().to_string()),
                 10..=19 => Some(patterns[mat.pattern().as_usize() - 9].to_string()),
                 _ => panic!(),
@@ -50,6 +47,5 @@ fn part_2() -> Result<usize, ()> {
         let first_last = first + &last;
         total += first_last.parse::<usize>().unwrap();
     }
-    println!("total: {total}");
-    Ok(total)
+    total
 }
