@@ -26,19 +26,6 @@ fn part_1() {
 
 fn part_2() -> Result<usize, ()> {
     use aho_corasick::AhoCorasick;
-    use std::collections::HashMap;
-
-    let num_map = HashMap::from([
-        ("one", 1),
-        ("two", 2),
-        ("three", 3),
-        ("four", 4),
-        ("five", 5),
-        ("six", 6),
-        ("seven", 7),
-        ("eight", 8),
-        ("nine", 9),
-    ]);
 
     let input = read_input();
     let patterns = &[
@@ -53,13 +40,7 @@ fn part_2() -> Result<usize, ()> {
             let get_match = match mat.pattern().as_usize() {
                 0 => None,
                 1..=9 => Some(mat.pattern().as_usize().to_string()),
-                10..=19 => Some(
-                    num_map
-                        .get_key_value(patterns[mat.pattern()])
-                        .unwrap()
-                        .1
-                        .to_string(),
-                ),
+                10..=19 => Some(patterns[mat.pattern().as_usize() - 9].to_string()),
                 _ => panic!(),
             };
             number += get_match.unwrap().as_str();
@@ -69,5 +50,6 @@ fn part_2() -> Result<usize, ()> {
         let first_last = first + &last;
         total += first_last.parse::<usize>().unwrap();
     }
+    println!("total: {total}");
     Ok(total)
 }
