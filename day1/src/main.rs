@@ -1,0 +1,73 @@
+use std::fs;
+
+fn main() {
+    part_2().unwrap();
+}
+
+fn read_input() -> String {
+    fs::read_to_string("input").unwrap()
+}
+
+fn part_1() {
+    let mut answer_sum: usize = 0;
+    let input = read_input();
+    for i in input.lines() {
+        let nums: Vec<u32> = i
+            .chars()
+            .filter_map(|x| x.to_digit(10))
+            .collect::<Vec<u32>>();
+        let first = nums.first().unwrap().to_string();
+        let last = nums.last().unwrap().to_string();
+        let final_answer = first + &last;
+        answer_sum += final_answer.parse::<usize>().unwrap();
+    }
+    println!("{answer_sum}");
+}
+
+fn part_2() -> Result<usize, ()> {
+    use aho_corasick::AhoCorasick;
+    use std::collections::HashMap;
+
+    let num_map = HashMap::from([
+        ("one", 1),
+        ("two", 2),
+        ("three", 3),
+        ("four", 4),
+        ("five", 5),
+        ("six", 6),
+        ("seven", 7),
+        ("eight", 8),
+        ("nine", 9),
+    ]);
+
+    let input = read_input();
+    let patterns = &[
+        r"0", r"1", r"2", r"3", r"4", r"5", r"6", r"7", r"8", r"9", r"one", r"two", r"three",
+        r"four", r"five", r"six", r"seven", r"eight", r"nine",
+    ];
+    let ac = AhoCorasick::new(patterns).unwrap();
+    let mut total = 0;
+    for i in input.lines() {
+        let mut number = String::new();
+        for mat in ac.find_overlapping_iter(i) {
+            let get_match = match mat.pattern().as_usize() {
+                0 => None,
+                1..=9 => Some(mat.pattern().as_usize().to_string()),
+                10..=19 => Some(
+                    num_map
+                        .get_key_value(patterns[mat.pattern()])
+                        .unwrap()
+                        .1
+                        .to_string(),
+                ),
+                _ => panic!(),
+            };
+            number += get_match.unwrap().as_str();
+        }
+        let last = number.chars().last().unwrap().to_string();
+        let first = number.chars().next().unwrap().to_string();
+        let first_last = first + &last;
+        total += first_last.parse::<usize>().unwrap();
+    }
+    Ok(total)
+}
