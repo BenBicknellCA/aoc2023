@@ -36,11 +36,11 @@ fn part_2() -> usize {
         let mut number = String::new();
         for mat in ac.find_overlapping_iter(i) {
             let get_match = match mat.pattern().as_usize() {
-                1..=9 => Some(mat.pattern().as_usize().to_string()),
-                10..=19 => Some(patterns[mat.pattern().as_usize() - 9].to_string()),
+                1..=9 => mat.pattern().as_usize().to_string(),
+                10..=19 => patterns[mat.pattern().as_usize() - 9].to_string(),
                 _ => panic!(),
             };
-            number += get_match.unwrap().as_str();
+            number += get_match.as_str();
         }
         let last = number.chars().last().unwrap().to_string();
         let first = number.chars().next().unwrap().to_string();
